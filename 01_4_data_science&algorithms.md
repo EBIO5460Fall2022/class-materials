@@ -1,0 +1,23 @@
+### What is data science?
+It probably depends who you ask. If you ask a computer scientist you might get one answer that emphasizes machine learning, if you ask a statistician you might get another that emphasizes practical data analysis, if you ask a scientist you might get yet a different answer. The National Science Foundation defines data science as "the science of planning for, acquisition, management, analysis of, and inference from data". This definition emphasizes that there is a workflow from planning to inference (we will add reporting after inference). In a slightly different perspective, Donoho (2017), identifies six divisions of data science that, instead of describing a linear workflow, describe the main activities:
+
+1. Data Exploration and Preparation
+2. Data Representation and Transformation
+3. Computing with Data
+4. Data Modeling
+5. Data Visualization and Presentation
+6. Science about Data Science
+
+In this course, we will cover 1-5 of the above and all of the workflow described by NSF.
+
+### Learning from data through algorithms
+The core of the current excitement around the phrase "data science" seems to be an emphasis on algorithms and workflows. Indeed, the overarching concept of *learning from data through algorithms* brings all of data science together. A particularly important divide in approaches to learning from data was pointed out by Breiman (2001) in which he identified two cultures, one (which Donoho 2017 called the *generative modeling culture*) in which the data generating process is modeled as a stochastic process (the approach taken by most of traditional statistics), and an alternative that focuses on prediction and uses algorithms that treat the data generating process as a black box (much of current machine learning). Breiman (2001) called this latter culture the *algorithmic modeling culture*, which signifies that the approach is purely algorithmic, that is, it doesn't matter what the algorithm is or whether we understand the underlying system being modeled so long as the algorithm predicts well. This is not to say that algorithms are unimportant in the generative modeling culture, for they are at least as important. The key distinction is that the details of the algorithm matter in the generative culture because an important part of the algorithm describes the data generating process and a key goal is often to *infer what the data generating process is*, rather than *what it predicts* (to be clear, prediction is often an important goal as well). In making sense of the world, scientists are usually interested in both *prediction* and *understanding the data generating process*, so algorithms from both of these cultures have been enthusiastically adopted in science. Furthermore, within data science there are other divisions, such as frequentist versus Bayesian, data engineering versus data modeling. Again, algorithmic thinking provides a way to make sense of and unify these divisions.
+
+Finally, there is a data science culture within the natural sciences that is rarely if ever mentioned in these discussions. Despite sharing core goals with the *data generative culture* this third culture is distinct enough to be considered separate at this time. This is the *natural-process modeling culture*. In this culture, the aim is to model data generating processes with high fidelity to the natural processes. For example, in meteorology, this might mean explicitly modeling the physics and chemistry of the atmosphere, in ecology it might mean explicitly modeling the demography (births and deaths) of populations, such as predators eating prey and so on, and in epidemiology as in the current SARS-CoV-2 pandemic it might mean explicitly modeling the processes that drive infection. The key distinction is that the algorithms in this paradigm attempt to *closely mimic the actual processes of natural systems*, whereas in the purely data-driven approach, the algorithms considered typically comprise combinations of generic descriptive functions (linear models, splines, etc) and generic distributions (Normal, binomial, etc). I favor the natural process culture wherever possible and it is the topic of my class Quantitative Ecology and Evolution. As currently practiced, mainstream data science is distinct from this. It is focused on patterns in data and on *generic algorithms*, rather than *natural-process algorithms*.
+
+The data science in this class will concern all three cultures and will focus on workflows and algorithms to learn from data.
+
+* Breiman L (2001) Statistical modeling: the two cultures. Statistical Science 16: 199-231.
+
+* Denoho D (2017) 50 years of data science. Journal of Computational and
+Graphical Statistics. 26:745-766.
