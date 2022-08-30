@@ -19,11 +19,17 @@ Once you have received an email from me (sometime Friday), take control of your 
 
 #### 3. Programming problems on selection structures
 
-This is a problem-set assignment. You should submit only one file of R code. The filename should be `coding_assignment1.R` (or `.Rmd` if you prefer) but you can add any prefixes to the filename that work with your file naming scheme. **Push your file to GitHub.**
+This is a problem-set assignment. You should submit only one file of R code. The filename should be `coding_assignment1.R` (or `.Rmd` if you prefer) but you can add any prefixes to the filename that work with your file naming scheme. **Push your file to your GitHub repository**. To push, you first commit to your local repository, then do
+
+   ```bash
+   git push
+   ```
+
+
 
 I suggest you follow the class coding style [ebio5460_r_style_guide.md](skills_tutorials/ebio5460_r_style_guide.md) but if you have a strong style preference from long experience I won't mind.
 
-You must not use any R packages!
+You must not use any R packages for these problems!
 
 
 
