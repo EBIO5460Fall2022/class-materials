@@ -24,6 +24,10 @@
 
 #----Getting help----
 
+# A primary reference for getting help in R is
+# https://www.r-project.org/help.html.
+# Read and bookmark this link.
+
 # Getting help within R is actually quite frustrating until you know what you 
 # are looking for. For very general things it is often best to try an internet
 # search, e.g. try googling:
@@ -33,9 +37,8 @@
 ?Arithmetic #For symbols that can be used
 ?Syntax     #For operator precedence
 # A big problem is that you need to know the keyword that you are looking for or
-# you will often either turn up nothing useful or a bewildering array of 
-# possibilities. Use R_help_keywords to narrow the possibilities. See 
-# below.
+# you will often either turn up nothing useful or a bewildering array of
+# possibilities. Use R_help_keywords to narrow the possibilities. See below.
 
 # At the end of most help topics there is typically example code, and this is 
 # often the most useful information. e.g.
@@ -57,16 +60,25 @@ example(aov)  #Run the examples provided with the aov function
 # stackoverflow.com or similar.
 
 # Click the Help tab in R studio (find it in one of the four panes) then click
-# on the Home icon. Or click Help from the Rstudio menu, the click R Help. From
+# on the Home icon. Or click Help from the Rstudio menu, then click R Help. From
 # here, you can find the following:
+#     Manuals. See especially "An introduction to R"
+#     Reference. Search Engine & Keywords
+#         Keywords are very useful here. They are like topics. e.g. arith gives
+#         you all the functions for doing basic arithmetic. Searching searches
+#         only keywords, so it can be a little frustrating. e.g. try searching
+#         "linear regression", the result is not necessarily what you want.
 
-# Manuals. See especially "An introduction to R"
-# Reference. Search Engine & Keywords
-#  Keywords are very useful here. They are like topics. e.g. arith gives you all
-#  the functions for doing basic arithmetic. Searching searches only keywords,
-#  so it can be a little frustrating. e.g. try searching "linear regression",
-#  the result is not necessarily what you want.
-
+# Packages
+# The usual way to get an overview of a package, including functions, datasets
+# and vignettes is:
+library(help="MASS") #package must be installed
+# ? with the package name is only sometimes helpful
+?stats
+# Many packages have vignettes, which are often tutorial-style descriptions of
+# how to use the package.
+browseVignettes()  #for all installed packages
+browseVignettes(package="parallel") #for a particular package
 
 #----R is a calculator----
 6 * 5
