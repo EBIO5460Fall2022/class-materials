@@ -12,7 +12,7 @@
 **Location:** Ramaley N183 and sometimes Zoom\
 **Zoom details:**
 
--   Meeting ID: 969 756 8909
+-   Meeting ID: 969 8756 8909
 -   In case you need to dial in:
     -   Find your local number: <https://cuboulder.zoom.us/u/acyOqFIhvC>
 
