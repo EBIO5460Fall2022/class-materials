@@ -7,7 +7,7 @@
 **email:** [brett.melbourne\@colorado.edu](mailto:brett.melbourne@colorado.edu)\
 **Office:** Ramaley N336 but mostly Zoom\
 **Office hours:** Any time by appointment\
-**Contacting me:** I prefer email\
+**Contacting me:** Try [Piazza](https://piazza.com/colorado/fall2022/ebio5460002/home) first, otherwise email me\
 **Class meeting times:** Monday & Wednesday 3:30-5 PM\
 **Location:** Ramaley N183 and sometimes Zoom\
 **Zoom details:**
@@ -69,6 +69,8 @@ You will be confident to use the skills and concepts above to plan for, acquire,
 I'm envisioning a collaborative learning atmosphere. By this I don't mean only learning among yourselves from "knowledge" passed down from me to you. While data science and scientists doing data science have been around for decades before it came to be called "data science" it is also rapidly developing. We will explore some of these cutting-edge areas. The class is a hybrid of flipped and in-class lectures. I'll assign reading and video lectures or tutorials, some that I will produce, and some from others. In class we will largely focus on doing data science with real data. There will be few worksheets or rote labs. We will apply algorithms to our own data, including an individual project. We'll often create fake data too.
 
 Hands on coding will often be done in small groups: collaboration is encouraged both in and out of class. I expect each person has different experience in different areas. I hope that we can create an environment that is relaxed and nonjudgmental so that we will all feel comfortable participating and also that all contributions are valued. I also hope that we can create an environment of respect for each other's learning processes and ideas.
+
+We'll be using Piazza for class  discussion. The system is highly catered to getting you help fast and  efficiently from classmates and myself. Rather than emailing  me questions, I encourage you to post your questions on Piazza and to answer other student's questions. Find our class page at: [https://piazza.com/colorado/fall2022/ebio5460002/home](https://piazza.com/dashboard/introduce_piazza#)
 
 #### Computing
 
