@@ -18,6 +18,7 @@ I decided to use Piazza for Q&A (rather than slack). This is where you can ask (
 
 * Watch for an invitation to sign up.
 * Log in and ask a question!
+* https://piazza.com/colorado/fall2022/ebio5460002
 
 
 
@@ -25,13 +26,15 @@ I decided to use Piazza for Q&A (rather than slack). This is where you can ask (
 
 Some new material to complete repetition structures
 
-* Video and slides TBA (probably Sunday)
+* [03_2_slides_repetition_structures_further.pdf](03_2_slides_repetition_structures_further.pdf)
+* [03_2_video_repetition_structures_further.md](03_2_video_repetition_structures_further.md)
 
 
 
 #### 4. Programming problems on repetition structures
 
-* Problem set TBA (probably Sunday). **Push to GitHub**
+* [03_3_repetition_structures_problem_set.md](03_3_repetition_structures_problem_set.md)
+* **Push to GitHub**
 
 
 
