@@ -6,6 +6,7 @@
 *.Rproj
 *.Rdata
 
+!dna_sequences.RData
 
 #########################################################
 # These were added by R studio to ignore key R and
