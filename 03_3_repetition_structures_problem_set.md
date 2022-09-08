@@ -119,10 +119,10 @@ numbers from 0 to n.
 
 ### Question 6
 
-The following code loads a list object named `dna_sequences` from the RData file [03_3_dna_sequences.RData](https://github.com/EBIO5460Fall2022/class-materials/blob/main/03_3_dna_sequences.RData) (download the file separately). Find and print the position of the 10th occurrence of a cytosine base in each sequence (e.g. in ATGTTACTTGCGA the position of the 1st occurrence of a cytosine base is 7) . You may use the function `length()` to find the length of a sequence.
+The following code loads a list object named `dna_sequences` from the RData file `dna_sequences.RData` (you can find the data file in the [`data` folder](/data) in the class-materials repository). Find and print the position of the 10th occurrence of a cytosine base in each sequence (e.g. in ATGTTACTTGCGA the position of the 1st occurrence of a cytosine base is 7) . You may use the function `length()` to find the length of a sequence.
 
 ```R
-load(file="03_3_dna_sequences.RData")
+load(file="dna_sequences.RData")
 dna_sequences         #print the full list
 str(dna_sequences)    #examine the structure of the list
 class(dna_sequences)  #the class is list

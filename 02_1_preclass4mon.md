@@ -58,12 +58,12 @@ if ( student_grade < 60 )
 
 ##### Question 2
 
-Why doesn't the following code work as intended?  (Provide your answer as a comment). Fix the code while retaining the single selection structures.
+Why doesn't the following code work as intended?  (Provide your answer as a comment). Fix the code while retaining the single selection structures. You can find the data file in the [`data` folder](/data) in the class-materials repository.
 
 Hint: sketch the flowchart for two stacked if single selection structures.
 
 ```R
-grades <- read.csv("02_1_grades.csv")
+grades <- read.csv("grades.csv")
 class_grades <- grades$class1
 if ( mean(class_grades) < 60 ) {
     adj <- 60 - mean(class_grades)         #calculate adjustment
