@@ -1,7 +1,7 @@
 # Structured programming: functions
 # Also illustrated here is the concept of scope.
 # Brett Melbourne
-# 25 Oct 17
+# 12 Sep 2022
 
 # Here is an example showing the syntax of a function
 
