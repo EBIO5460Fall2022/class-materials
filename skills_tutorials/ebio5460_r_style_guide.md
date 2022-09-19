@@ -46,7 +46,7 @@ x = 5
 
 
 ## Spacing
-Place spaces around all mathematical operators (arithmetic, logical, comparison) and the assignment operator (`+`, `-`, `<-`, etc.) but not around other operators. However, you can use a judicious lack of space to clarify groupings in complicated equations. Keep your script clean (for example, don't leave a string of spaces on an empty line).
+Place spaces around all mathematical operators (arithmetic, logical, comparison) and the assignment operator (`+`, `-`, `<-`, etc.) but not around other operators. However, you can use a judicious lack of space to clarify groupings in complicated equations. No spaces after the comma in indexes. Keep your script clean (for example, don't leave a string of spaces on an empty line).
 
 ### In style
 ```r
@@ -111,7 +111,7 @@ for (i in 1:10) {
 
 
 ## Function calls
-Don't use spaces around function parentheses. Spaces are optional after commas or around mathematical operators within parentheses of a function call. Don't use spaces around the `=` symbol. Don't use spaces in nested function calls. Balance the need for readability and fitting on a line. Use your judgment.
+Don't use spaces around function parentheses. Spaces are optional after commas or around mathematical operators within parentheses of a function call. Don't use spaces around the `=` symbol. Balance the need for readability and fitting on a line. Use your judgment.
 
 ### In style
 ```r
@@ -133,18 +133,18 @@ plot( x, y )
 
 
 ## Function definitions
-Do not rely on R’s implicit return feature. It is better to be clear about your intent to `return()` an object.
+No extra spaces inside parentheses. Space after comma in argument list. Space before brace. Indent 4 spaces. Do not rely on R’s implicit return feature. It is better to be clear about your intent to `return()` an object.
 
 ### In style
 ```r
-add_values <- function(x,y) {
+add_values <- function(x, y) {
     return(x + y)
 }
 ```
 
 ### Not in style
 ```r
-add_values <- function(x,y) {
+add_values <- function( x, y ) {
     x + y
 }
 ```
