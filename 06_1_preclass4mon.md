@@ -36,4 +36,5 @@ Page references are to McElreath (2016) first edition.
 
 #### 5. Likelihood inference algorithm for the linear model
    * Read the following and explore the R code. This will be Monday's lecture.
+   * Additional R files associated with this script are in the `source` directory.
    * [06_3_likelihood_inference.md](06_3_likelihood_inference.md)
