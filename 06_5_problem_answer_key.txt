@@ -1,0 +1,16 @@
+2E1: Pr(rain|Monday) ... and Pr(rain,Monday)/Pr(Monday)
+2E2: The probability that it is Monday, given that it is raining
+2E3: Pr(Monday|rain) ... and Pr(rain|Monday)Pr(Monday)/Pr(rain)
+
+2M4: 2/3
+2M5: 4/5
+2M7: 3/4
+2H1: 1/6
+
+Likelihood if Panda has twins:
+M1: 1/100
+M2: 1/25
+
+Likelihood if Panda has a singleton:
+M1: 9/100
+M2: 16/100
