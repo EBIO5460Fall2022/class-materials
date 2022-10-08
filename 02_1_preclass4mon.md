@@ -2,36 +2,26 @@
 
 For the duration of the semester, you should complete these homework assignments before class. In class, we will generally build on the pre-class work or you will share your work with a small group.
 
-
-
-#### 1. **Skill of the week:** version control using Git. 
+#### 1. **Skill of the week:** version control using Git.
 
 Once you have received an email from me (sometime Friday), take control of your repo (see [git02_your_repo.md](skills_tutorials/git02_your_repo.md)). In [git03_basics.md](skills_tutorials/git03_basics.md) learn the basics of how Git works, how to make a repository, add files to it, track changes, and backtrack to a previous state.
 
-
-
 #### 2. Watch the video lecture on "Selection structures"
 
-   * [01_7_slides_selection_structures.pdf](01_7_slides_selection_structures.pdf)
-   * [01_7_video_selection_structures.md](01_7_video_selection_structures.md)
-
-
+* [01_7_slides_selection_structures.pdf](01_7_slides_selection_structures.pdf)
+* [01_7_video_selection_structures.md](01_7_video_selection_structures.md)
 
 #### 3. Programming problems on selection structures
 
 This is a problem-set assignment. You should submit only one file of R code. The filename should be `coding_assignment1.R` (or `.Rmd` if you prefer) but you can add any prefixes to the filename that work with your file naming scheme. **Push your file to your GitHub repository**. To push, you first commit to your local repository, then do
 
-   ```bash
-   git push
-   ```
-
-
+```bash
+git push
+```
 
 I suggest you follow the class coding style [ebio5460_r_style_guide.md](skills_tutorials/ebio5460_r_style_guide.md) but if you have a strong style preference from long experience I won't mind.
 
 You must not use any R packages for these problems!
-
-
 
 ##### Single selection structure
 
@@ -40,8 +30,6 @@ if ( condition ) {
     expression
 }
 ```
-
-
 
 ##### Question 1
 
@@ -54,8 +42,6 @@ if ( student_grade < 60 )
     print("You need to take the course again")
 ```
 
-
-
 ##### Question 2
 
 Why doesn't the following code work as intended?  (Provide your answer as a comment). Fix the code while retaining the single selection structures. You can find the data file in the [`data` folder](/data) in the class-materials repository.
@@ -65,19 +51,19 @@ Hint: sketch the flowchart for two stacked if single selection structures.
 ```R
 grades <- read.csv("grades.csv")
 class_grades <- grades$class1
+mean(class_grades)
 if ( mean(class_grades) < 60 ) {
-    adj <- 60 - mean(class_grades)         #calculate adjustment
-    class_grades <- class_grades + adj     #adjust the original grades
-    message <- "Mean for raw grades was a fail: grades adjusted"
-}
+  adj <- 60 - mean(class_grades)         #calculate adjustment
+  class_grades <- class_grades + adj     #adjust the original grades
+  message <- "Mean for raw grades was a fail: grades adjusted"
+} 
 if ( mean(class_grades) >= 60 ) {
-    message <- "Average grade was a pass: no adjustment made"
+  message <- "Average grade was a pass: no adjustment made"
 }
+mean(class_grades)
 print(message)
 print(class_grades)    #Should now be adjusted if necessary
 ```
-
-
 
 ##### Double selection structure
 
@@ -89,13 +75,9 @@ if ( condition1 ) {
 }
 ```
 
-
-
 ##### Question 3
 
 Fix the code in (2)  using a double selection structure. Which option works best, stacked single selection structures or a double selection structure, and why? (Provide your answer as a comment).
-
-
 
 ##### Question 4
 
@@ -129,15 +111,12 @@ Your answer will require separate code for each of table (a) and table (b).
 
 A single algorithm should produce all of the patterns in table (a) by changing only the input values of y and x. 
 
-
 | Table (b)       | Case 1       | Case 2       | Case 3       |
 | --------------- | ------------ | ------------ | ------------ |
 | With input:     | y = 3, x = 1 | y = 2, x = 3 | y = 2, x = 1 |
 | Pattern output: | `# $ &`      | `&`          | `@ &`        |
 
 A single algorithm should produce all of the patterns in table (b) by changing only the input values of y and x.
-
-
 
 ##### Question 5
 
