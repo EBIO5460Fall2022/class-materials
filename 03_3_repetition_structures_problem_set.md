@@ -8,8 +8,6 @@ For these problems, only use the basic selection and repetition structures cover
 
 Get help or ask questions on [our Piazza forum]( https://piazza.com/colorado/fall2022/ebio5460002/home)!
 
-
-
 ## Repetition structures
 
 ```R
@@ -27,10 +25,7 @@ for ( i in 1:n ) {
 for ( element in vector ) {
     expression
 }
-
 ```
-
-
 
 ### Question 1
 
@@ -43,8 +38,6 @@ while ( number <= 100 ) {
     number <- number - 1
 }
 ```
-
-
 
 ### Question 2
 
@@ -59,7 +52,6 @@ z <- 2      #Any integer > 0
 
 # Initialize working variables
 y <- 1
-counter <- 1
 
 # Processing phase
 for ( counter in 1:z ) {
@@ -68,18 +60,19 @@ for ( counter in 1:z ) {
 
 # Termination phase
 y
-
 ```
 
 Does it work correctly for integer z = 0 (try it out)? If not, fix it so integer z = 0 will work correctly with a **for** structure. 
 
 Hints: 
+
 * One possible solution would be to use a selection structure.
 * What do each of the following lines of code return?
 
 ```R
 1:10
 ```
+
 ```R
 1:3
 ```
@@ -92,30 +85,17 @@ Hints:
 1:0
 ```
 
-
-
 ### Question 3
 
-Print all the numbers less than 1000 in the Fibonacci sequence. The first two numbers
-in the Fibonacci sequence are 0 and 1, and each subsequent number is the sum
-of the previous two.
-
-
+Print all the numbers less than 1000 in the Fibonacci sequence. The first two numbers in the Fibonacci sequence are 0 and 1, and each subsequent number is the sum of the previous two.
 
 ### Question 4
 
-Calculate the factorial of a number. For example 5 factorial, denoted 5!, is equal
-to 5 x 4 x 3 x 2 x 1, while 0! is defined to be equal to 1. Hint: start with a specific
-case (e.g. 5!) then generalize your algorithm.
+Calculate the factorial of a number (non-negative integer). For example 5 factorial, denoted 5!, is equal to 5 x 4 x 3 x 2 x 1, while 0! is defined to be equal to 1. Hint: start with a specific case (e.g. 5!) then generalize your algorithm.
 
+### Question 5
 
-
-### Question 5 
-
-Now modify your code in the previous example to calculate the factorial for all the
-numbers from 0 to n.
-
-
+Now modify your code in the previous example to calculate and print the factorial for all the integers from 0 to n.
 
 ### Question 6
 
@@ -123,7 +103,7 @@ The following code loads a list object named `dna_sequences` from the RData file
 
 ```R
 load(file="dna_sequences.RData")
-dna_sequences         #print the full list
-str(dna_sequences)    #examine the structure of the list
 class(dna_sequences)  #the class is list
+str(dna_sequences)    #examine the structure of the list
+dna_sequences         #print the full list
 ```
