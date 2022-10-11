@@ -33,7 +33,7 @@ if ( condition ) {
 
 ##### Question 1
 
-What is wrong with the following code? (Provide your answer as a comment). Fix the code.
+What goes wrong with the following code and why? (Provide your answer as a comment). Fix the code.
 
 ```R
 student_grade <- 75
@@ -51,16 +51,14 @@ Hint: sketch the flowchart for two stacked if single selection structures.
 ```R
 grades <- read.csv("grades.csv")
 class_grades <- grades$class1
-mean(class_grades)
 if ( mean(class_grades) < 60 ) {
-  adj <- 60 - mean(class_grades)         #calculate adjustment
-  class_grades <- class_grades + adj     #adjust the original grades
-  message <- "Mean for raw grades was a fail: grades adjusted"
-} 
-if ( mean(class_grades) >= 60 ) {
-  message <- "Average grade was a pass: no adjustment made"
+    adj <- 60 - mean(class_grades)         #calculate adjustment
+    class_grades <- class_grades + adj     #adjust the original grades
+    message <- "Mean for raw grades was a fail: grades adjusted"
 }
-mean(class_grades)
+if ( mean(class_grades) >= 60 ) {
+    message <- "Average grade was a pass: no adjustment made"
+}
 print(message)
 print(class_grades)    #Should now be adjusted if necessary
 ```
@@ -70,7 +68,7 @@ print(class_grades)    #Should now be adjusted if necessary
 ```R
 if ( condition1 ) {
     expression1
-} else if ( condition2 ) {
+} else {
     expression2
 }
 ```
