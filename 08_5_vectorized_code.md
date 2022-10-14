@@ -1,0 +1,214 @@
+Vectorized R code
+================
+Brett Melbourne
+2022-10-14
+
+This program illustrates the difference between using repetition and
+selection structures versus vectorized operations.
+
+Vectorized code is often much faster in R and many similar environments
+(e.g. Matlab). In some cases vectorized code is more natural to read. In
+other cases vectorized code can be more obtuse. There are pros and cons.
+
+## Example 1
+
+Simple addition of two vectors.
+
+``` r
+A <- c(1,  4, -2, 3, 8)
+B <- c(1, -8, -3, 6, 5)
+```
+
+``` r
+A
+```
+
+    ## [1]  1  4 -2  3  8
+
+``` r
+B
+```
+
+    ## [1]  1 -8 -3  6  5
+
+To add A and B, we could do this:
+
+``` r
+C <- rep(NA, 5)
+for ( i in 1:5 ) {
+    C[i] <- A[i] + B[i]
+}
+C
+```
+
+    ## [1]  2 -4 -5  9 13
+
+But in R, that would be nuts! We can vectorize this operation. Just do
+this:
+
+``` r
+C <- A + B
+C
+```
+
+    ## [1]  2 -4 -5  9 13
+
+It’s doing exactly the same thing as the previous R `for` loop but the
+`for` loop is now behind the scenes in much faster, compiled, C code.
+The `+` in R is actually a function.
+
+``` r
+"+"(A, B)
+```
+
+    ## [1]  2 -4 -5  9 13
+
+and if you delve deep enough in the source code of the function, you
+will ultimately find C code like this (slightly edited for clarity):
+
+``` c
+double plus( double s1, double s2, int n ) {
+
+    double ans[n];
+
+    for ( int i = 0; i < n; i = i + 1 ) {
+        ans[i] = s1[i] + s2[i];
+    }
+
+    return ans;
+}
+```
+
+There isn’t actually a function called “plus”. This is the case `PLUSOP`
+in the function `real_binary` in the source code file `arithmetic.c` in
+`\src\main`.
+
+## Example 2
+
+This example contrasts two methods for calculating the vector y from the
+vector x for the linear model y\[i\] = b_0 + b_1 x\[i\], where i indexes
+the elements of the vectors. The function `system.time()` is used to
+time the calculations for comparison.
+
+``` r
+vector_length <- 1e8        #A large vector
+x <- runif(vector_length)   #Create some values to use for x
+b_0 <- 1.2
+b_1 <- 2.5
+```
+
+For loop, writing to elements of the new vector, takes about 7 seconds
+on a 1.7 GHz Intel i5 processor (2019).
+
+``` r
+system.time(
+{
+    y <- rep(NA, length(x))
+    for ( i in 1:length(x) ) {
+        y[i] <- b_0 + b_1 * x[i]
+    }
+}
+)
+```
+
+    ##    user  system elapsed 
+    ##    6.52    0.19    6.70
+
+R’s native vectorized operation takes about 0.3 seconds, about 40X
+faster. The code is much simpler too!
+
+``` r
+system.time(
+    y <- b_0 + b_1 * x
+)
+```
+
+    ##    user  system elapsed 
+    ##    0.17    0.13    0.30
+
+As we saw above, behind the scenes R takes these instructions (the R
+code) and dispatches the work to the R source code that is written in C.
+This C code uses C `for` loops to do the addition and multiplication
+operations. These C `for` loops have the same algorithmic structure as
+the slower R code algorithm above but it runs super fast in C.
+
+## Example 3
+
+Logical and comparison operations can also be vectorized, often
+eliminating both repetition and selection structures at the same time.
+Here is an example like the student grades question in the selection
+structures assignment. The goal is to record “Passed” or “Failed” with a
+threshold grade of 60 for a class of students. I set the number of
+students here to a very high number to illustrate the difference in
+compute time.
+
+Read in the data (generated here for illustration)
+
+``` r
+numStudents <- 1e7      
+grades <- runif(numStudents, 0, 100)
+```
+
+For loop, writing to a result vector. About 2.2 seconds.
+
+``` r
+system.time(
+{
+    result <- rep(NA, numStudents)
+    for ( i in 1:numStudents ) {
+        if ( grades[i] < 60 ) {
+            result[i] <- "Failed"
+        } else {
+            result[i] <- "Passed"
+        }
+    }
+}
+)
+```
+
+    ##    user  system elapsed 
+    ##    2.11    0.05    2.16
+
+You can use fundamental vectorized operations to achieve the same thing.
+This is about 7X faster.
+
+``` r
+system.time(
+{
+    result <- rep(NA, numStudents)
+    result[ ( grades < 60 ) ] <- "Failed"
+    result[ !( grades < 60 ) ] <- "Passed"
+}
+)
+```
+
+    ##    user  system elapsed 
+    ##    0.26    0.04    0.31
+
+Faster still is this version (but it might accidentally default to
+passing some students if there are issues in the data)
+
+``` r
+system.time(
+{
+    result <- rep("Passed", numStudents)
+    result[ ( grades < 60 ) ] <- "Failed"
+}
+)
+```
+
+    ##    user  system elapsed 
+    ##    0.17    0.00    0.17
+
+A neat vectorized solution is provided by the `ifelse()` function. This
+requires only one line of code but it takes even longer than the `for`
+loop. So, vectorizing is *not always* faster than `for` loops.
+
+``` r
+system.time(
+    result <- ifelse( grades < 60, "Failed", "Passed" )
+)
+```
+
+    ##    user  system elapsed 
+    ##    2.70    0.04    2.73
