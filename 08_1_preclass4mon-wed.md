@@ -36,9 +36,7 @@ Then, close Rstudio.
 
 **Mac OS**
 
-* Go to [Configuring C Toolchain for Mac](https://github.com/stan-dev/rstan/wiki/Configuring-C---Toolchain-for-Mac) and follow the instructions.
-
-* I don't have a Mac to try this. Last year we had trouble with the `macOS R toolchain installer` for some of the latest Macs (particulary the M1s). I'm assuming things have been updated now and it will work. However, there is a good chance we'll run into problems. Please post to Piazza ASAP if you encounter issues and we can apply workarounds we figured out last year.
+* The instructions on the [RStan wiki](https://github.com/stan-dev/rstan/wiki/Configuring-C---Toolchain-for-Mac) don't work for MacOS 11+. Use our confirmed process at [08_1_toolchain_MacOS.md](08_1_toolchain_MacOS.md).
 
 ##### Step 3. Install Rstan
 
