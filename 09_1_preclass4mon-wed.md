@@ -49,10 +49,18 @@ We will continue working with the ants data on Monday, sharing your ideas for an
 * Using a `.R` file (i.e. not `.Rmd`) fit a Normal linear model to the ants data that would best address the scientific questions posed in class. The appropriate model is a multiple regression with an interaction of latitude and habitat. We will not include the `elevation` or `site` variables for now. It's easiest to fit this model with `lm()`.
   
   ```r
-  lm(richness ~ habitat + latitude + habitat:latitude, data=ant)
+  fit <- lm(richness ~ habitat + latitude + habitat:latitude, data=ant)
   ```
 
 * Don't attempt to fix any problems with the model (i.e. don't transform the data or use a different distributional assumption or nonlinear model).
+
+* Construct diagnostic plots for this model. To extract some basic information used to construct the plots, you can use
+
+  ```r
+  r <- fit$residuals
+  fv <- fit$fitted
+  cooks <- cooks.distance(fit)
+  ```
 
 * Describe the patterns in the diagnostic plots. What assumptions of the Normal linear model are violated according to these patterns?
 
