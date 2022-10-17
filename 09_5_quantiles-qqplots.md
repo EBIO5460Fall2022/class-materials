@@ -1,7 +1,7 @@
 Quantiles and Q-Q plots
 ================
 Brett Melbourne
-6 Oct 2021
+6 Oct 2021 (updated 17 Oct 2022)
 
 A short tutorial on quantiles and Q-Q plots
 
@@ -57,7 +57,7 @@ Are 80% of the data less than the 0.8 quantile of 0.8416?
 sum(z < 0.8416) / 100000
 ```
 
-    ## [1] 0.79942
+    ## [1] 0.80144
 
 Yes, that’s about right.
 
@@ -71,6 +71,7 @@ Let’s say we have some data, y. We’ll imagine these are real data from
 now on. It’s a small dataset, say 20 points.
 
 ``` r
+set.seed(23)    #to reproduce the exact example
 y <- rnorm(20)
 ```
 
@@ -81,10 +82,10 @@ q <- sort(y)
 q #The observed quantiles
 ```
 
-    ##  [1] -2.7138498 -1.7393576 -1.6499127 -1.2132795 -0.8164366 -0.7741108
-    ##  [7] -0.4962083 -0.4561042 -0.3884596 -0.3563116  0.4449208  0.4763855
-    ## [13]  0.5317256  0.7110071  0.7526867  0.9637784  1.2197370  1.7223036
-    ## [19]  1.7296007  1.7916341
+    ##  [1] -1.21637643 -1.04653534 -0.59931281 -0.52017831 -0.44231380 -0.43468211
+    ##  [7] -0.28868865 -0.27808628  0.04543718  0.19321233  0.21828845  0.30813690
+    ## [13]  0.48155029  0.91326710  0.99660511  1.01920549  1.10749049  1.29457783
+    ## [19]  1.57577959  1.79338809
 
 So, for example, the fourth value of the ordered data is the quantile
 with p = 4/20. That is 4/20 of the data are less than or equal to this
@@ -94,7 +95,7 @@ value (but we’ll take that as an estimate for strictly less than):
 q[4]
 ```
 
-    ## [1] -1.21328
+    ## [1] -0.5201783
 
 Now, because this is a finite sample and the sample is quite small and
 we won’t expect the quantile for p = 1.0 to be in the sample, we include
@@ -106,27 +107,27 @@ p <- ( 1:n - 0.5 ) / n  #We'll take these as the probabilities
 cbind(p, q)             #The probabilities with their quantiles
 ```
 
-    ##           p          q
-    ##  [1,] 0.025 -2.7138498
-    ##  [2,] 0.075 -1.7393576
-    ##  [3,] 0.125 -1.6499127
-    ##  [4,] 0.175 -1.2132795
-    ##  [5,] 0.225 -0.8164366
-    ##  [6,] 0.275 -0.7741108
-    ##  [7,] 0.325 -0.4962083
-    ##  [8,] 0.375 -0.4561042
-    ##  [9,] 0.425 -0.3884596
-    ## [10,] 0.475 -0.3563116
-    ## [11,] 0.525  0.4449208
-    ## [12,] 0.575  0.4763855
-    ## [13,] 0.625  0.5317256
-    ## [14,] 0.675  0.7110071
-    ## [15,] 0.725  0.7526867
-    ## [16,] 0.775  0.9637784
-    ## [17,] 0.825  1.2197370
-    ## [18,] 0.875  1.7223036
-    ## [19,] 0.925  1.7296007
-    ## [20,] 0.975  1.7916341
+    ##           p           q
+    ##  [1,] 0.025 -1.21637643
+    ##  [2,] 0.075 -1.04653534
+    ##  [3,] 0.125 -0.59931281
+    ##  [4,] 0.175 -0.52017831
+    ##  [5,] 0.225 -0.44231380
+    ##  [6,] 0.275 -0.43468211
+    ##  [7,] 0.325 -0.28868865
+    ##  [8,] 0.375 -0.27808628
+    ##  [9,] 0.425  0.04543718
+    ## [10,] 0.475  0.19321233
+    ## [11,] 0.525  0.21828845
+    ## [12,] 0.575  0.30813690
+    ## [13,] 0.625  0.48155029
+    ## [14,] 0.675  0.91326710
+    ## [15,] 0.725  0.99660511
+    ## [16,] 0.775  1.01920549
+    ## [17,] 0.825  1.10749049
+    ## [18,] 0.875  1.29457783
+    ## [19,] 0.925  1.57577959
+    ## [20,] 0.975  1.79338809
 
 The relationship between p and the ordered y (i.e. q) is the empirical
 cdf
@@ -171,22 +172,35 @@ for ( i in 1:n ) {
 
 The Q-Q plot is the observed quantiles versus the theoretical quantiles.
 If the data are well approximated by the theoretical distribution (in
-this case Normal), then this should be a straightish line. In this case,
-since both the data and the theoretical distribution are standard normal
-(i.e. mean=0, sd=1), the line is expected to be 1:1. But since the
-dataset is small, the realization will be off the line.
+this case Normal), then this should be a straightish line. Since the
+dataset is small it won’t be perfectly straight.
 
 ``` r
 plot(qth, q)
-abline(0, 1, col="blue")
 ```
 
 ![](09_5_quantiles-qqplots_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
-You can try running the code several times (starting from generating the
-data) and see how much it differs. Or try simulating a larger dataset.
-Or try simulating a dataset that is Normal with different mean and sigma
-(the line will still be straight), or generate data from a non-Normal
-distribution, such as lognormal or Poisson (the line will not be
-straight unless the distribution happens to be approximated well by the
-Normal).
+The following code makes the same plot using R’s built in functions and
+adds a line to indicate theoretically where the points should be.
+
+``` r
+qqnorm(y)
+qqline(y)
+```
+
+![](09_5_quantiles-qqplots_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+Explore how the Q-Q plot varies depending on the data. You can try
+running the following code several times and see how much it differs. Or
+try simulating a larger dataset. Or try simulating a dataset that is
+Normal with different mean and sigma (the line will still be straight),
+or generate data from a non-Normal distribution, such as lognormal
+(`rlnorm()`) or Poisson (`rpois()`) (the line will not be straight
+unless the distribution happens to be approximated well by the Normal).
+
+``` r
+y <- rnorm(20, mean=0, sd=1)
+qqnorm(y)
+qqline(y)
+```

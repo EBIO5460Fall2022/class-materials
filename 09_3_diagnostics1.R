@@ -107,7 +107,7 @@ plot(preds, r, ylab="Residuals", xlab="Fitted values",
 abline(h=0, col="red")
 
 # 3. Quantile-quantile plot
-qqnorm(r) #This plots the same graph using R's built in function
+qqnorm(r)
 qqline(r)
 # See quantiles_&_qqplots.R for a tutorial on quantiles and Q-Q plots
 
@@ -115,8 +115,8 @@ qqline(r)
 plot(1:length(cooks), cooks, ylab="Cooks distance", xlab="Index of data",
      main="Influence")
 
-# Several of these, or variants, are also are produced by by R's linear
-# regression tools.
+# Several of these, or variants, are also produced by R's linear regression
+# tools.
 par(mfrow=c(3,2))
 plot(fit, 1:6, ask=FALSE)
 ?plot.lm
