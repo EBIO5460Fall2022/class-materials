@@ -54,13 +54,15 @@ We will continue working with the ants data on Monday, sharing your ideas for an
 
 * Don't attempt to fix any problems with the model (i.e. don't transform the data or use a different distributional assumption or nonlinear model).
 
-* Construct diagnostic plots for this model. To extract some basic information used to construct the plots, you can use
+* To extract some basic information to construct diagnostic plots, you can use:
 
   ```r
   r <- fit$residuals
   fv <- fit$fitted
   cooks <- cooks.distance(fit)
   ```
+
+* Construct diagnostic plots for this model. Construct all the diagnostic plots described in task (2) above. For the case deletion influence plot you can use the cooks statistic in lieu of the full case deletion algorithm.
 
 * Describe the patterns in the diagnostic plots. What assumptions of the Normal linear model are violated according to these patterns?
 
