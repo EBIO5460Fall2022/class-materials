@@ -79,7 +79,7 @@ Fix the code in (2)  using a double selection structure. Which option works best
 
 ##### Question 4
 
-Where should I put braces and indents? Modify the following code to produce the patterns shown in tables (a) and (b) depending on the input. You may not make any changes other than indentation or inserting braces.
+Where should I put braces and indents? Modify the following code to produce the patterns shown in tables (a) and (b) depending on the input. You may not make any changes other than indentation or inserting braces. Your answer should be clear, readable code with good style.
 
 ```R
 pattern <- NULL
@@ -120,4 +120,24 @@ A single algorithm should produce all of the patterns in table (b) by changing o
 
 Write an algorithm (as R code) that determines whether a 5 digit integer reads the same forwards as backwards (i.e. a palindrome). Your algorithm should take the integer as input (no other inputs are allowed). The algorithm should print out "The number is a palindrome" or "The number is not a palindrome". Use only basic operators to do the necessary calculations (see ?Arithmetic and ?Syntax for a list of allowed operators). **You may not use any R functions**, except for `print()`. Resist the temptation to Google for an answer (there are many algorithms for palindromes). If you don't think about it, you won't get as much benefit, and you will end up with someone else's algorithm.
 
-Hint: use the division (`/`) and modulus (`%%`) operators to separate the number into individual digits (and store them as objects) first.
+Hint: use the division (`/`) and modulus (`%%`) operators to separate the number into individual digits (and store them as objects) first. The modulus operator returns the remainder after dividing by a number. For example
+
+```R
+6245 %% 1000
+```
+
+```
+[1] 245
+```
+
+Alternatively, you might find the modulus division (`%/%`) operator to be useful. 
+
+```R
+6245 %/% 1000
+```
+
+```
+[1] 6
+```
+
+The modulus operators are very useful in computer programming.
