@@ -29,7 +29,7 @@ As we move into data with more complex structure it helps to have a good tool li
 
 #### 4. Bayesian analysis of the ant data using `stan_glm()` from rstanarm
 
-The Bayesian analysis will mimic the frequentist analysis (demonstrated in class) but now using `stan_glm()`. See the [glm cheatsheet](10_3_glm_cheatsheet.R) and refer back to what you learned for Bayesian ordinary linear models in McElreath Ch 4.
+This can't be done until after Monday's class. The Bayesian analysis will mimic the frequentist analysis (demonstrated in Monday's class) but now using `stan_glm()`. See the [glm cheatsheet](10_3_glm_cheatsheet.R) (posted after Monday's class) and refer back to what you learned for Bayesian ordinary linear models in McElreath Ch 4.
 
 * `stan_glm()` has good default priors for the parameters. We don't need to specify them as we have up until now. We'll take a look at those choices in class.
 * Focus on estimates of the $\beta$s. Regression intervals (credible intervals and prediction intervals) are somewhat more involved coding wise, so I'll demonstrate these later.
