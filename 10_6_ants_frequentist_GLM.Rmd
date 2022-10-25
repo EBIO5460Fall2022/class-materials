@@ -1,0 +1,168 @@
+---
+title: Ant data Generalized Linear Model - Frequentist
+author: Brett Melbourne
+date: 11 Oct 2018 (updated 24 Oct 2022)
+output:
+    github_document:
+        pandoc_args: --webtex
+---
+
+This is the first in a series of scripts to analyze the ant data described in Ellison (2004). This script demonstrates frequentist inference from the GLM. Future scripts will consider a Bayesian approach to the ant analysis, as well as multilevel models to fully account for the design structure and data variance.
+
+This script can be rendered to a reproducible report.\
+`rmarkdown::render("10_6_ants_frequentist.Rmd")`, or *Ctrl+Shift+K* in RStudio.
+
+```{r results=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+```
+
+## EDA
+
+Read in the ants data:
+
+```{r}
+ant <- read.csv("data/ants.csv")
+head(ant)
+```
+
+For now we will focus on the relationship of species richness with latitude
+and habitat. Later we will consider the other variables.
+
+Convert habitat to a factor
+
+```{r}
+ant$habitat <- factor(ant$habitat)
+```
+
+Plot the data with `ggplot`. The most common, abbreviated, style would be
+
+```{r}
+ggplot(ant, aes(latitude, richness, col=habitat)) + 
+    geom_point()
+```
+
+This is an attractive and effective default plot. There is a grid to aid judging distance on a common scale, a color scale with good contrast between categories, filled points and a grey background to help the points pop, and an automatic legend placed outside of the plotting area.
+
+Since we are focusing on the grammar of graphics logic and particularly the mapping of variables to visual channels, from here we'll use a slightly more verbose style to emphasize our thoughtful choices. The following code would produce a plot identical to the plot made by the more terse code above.
+
+```{r eval=FALSE}
+ggplot(data=ant, mapping=aes(x=latitude, y=richness, col=habitat)) + 
+    geom_point()
+```
+
+A nice feature of `ggplot` is the use of themes. Here is the same plot with the black and white theme.
+
+```{r}
+ggplot(data=ant, mapping=aes(x=latitude, y=richness, col=habitat)) + 
+    geom_point() +
+    theme_bw()
+```
+
+
+
+## Training
+
+Now, let's move on to analysis. Fit the full model using `glm()`, which uses a maximum likelihood algorithm:
+
+```{r}
+fitHxL <- glm(richness ~ habitat + latitude + habitat:latitude, family=poisson, data=ant)
+coef(fitHxL) #Maximum likelihood estimates of parameters
+```
+
+Diagnostic plots
+
+```{r}
+par(mfrow=c(2,2))
+plot(fitHxL,1:4, ask=FALSE)
+```
+
+Overall, the diagnostics seem not too bad. It is certainly an improvement over the Normal linear model we tried before. There is perhaps still a slight tendency for the standardized residuals to increase with the mean (we'll investigate that further later) and there is an influential point (case 25). We should investigate the influential point using our case deletion algorithm to examine parameter sensitivity to this point. We'll return to that later as we continue to improve the model.
+
+
+## Inference
+
+Out of the box inferences about parameter uncertainty come from the assumption of a Normal sampling distribution for the parameter z-values (estimate divided by standard error), giving us a p-value for each parameter.
+
+```{r}
+summary(fitHxL)
+```
+```{r eval=FALSE}
+coef(summary(fitHxL))[,1:2]   #or use this for just the coefficients
+```
+
+However, most of the parameter hypotheses being considered here are not meaningful, either because we don't care about them biologically (e.g. we don't care about the `intercept` hypothesis that species richness is different from zero at the equator), or because the parameters are all interdependent (e.g. the fact that the `habitatforest` parameter is not significantly different from zero means nothing because it is balanced against the estimate for `habitatforest:latitude`). The one slightly meaningful inference is for the `habitatforest:latitude` parameter, which is telling us that there is little evidence for an interaction on the scale of the linear predictor. But even this doesn't necessarily translate to the biological hypothesis of no interaction between habitat and latitude since the relationship with latitude is nonlinear, as we will see more clearly when the fitted model is plotted below. Take away: most of the hypothesis tests in these summary tables are usually irrelevant to hypotheses that we are scientifically interested in, except in infrequent special cases. As we'll see later, if we want to test specific scientific hypotheses, we'll need to be deliberate about expressing them as alternative models.
+
+95% confidence intervals for parameters are obtained by profiling the likelihood surface. This is just as we did earlier by varying one parameter while optimizing over the others. Here, the intervals are frequentist and are formed by assuming that the likelihood ratio has a $\chi ^{2}$ sampling distribution. Note this is not the same as the pure likelihood intervals we constructed earlier since here the likelihood ratio is merely a statistic and the inferential basis is the sampling distribution of the statistic.
+
+```{r}
+confint(fitHxL)
+```
+
+The correlation matrix for the parameters shows how the `habitatforest` and `habitatforest:latitude` parameters are highly interdependent.
+
+```{r}
+cov2cor(vcov(fitHxL))
+```
+
+Although meaningless for a single model, the log likelihood is useful for comparison with alternative models. Here's how we can extract the log likelihood.
+
+```{r}
+logLik(fitHxL)
+```
+
+To construct regression intervals, we can use the `predict()` function. For GLMs, there is no `interval="confidence"` option, so we have to construct intervals from the standard errors. This is approximate. More accurate intervals are obtained by parametric bootstrap.
+
+```{r}
+newd <- data.frame(latitude = rep(seq(min(ant$latitude), max(ant$latitude), length.out=100),2),
+                   habitat = factor(rep(c("bog","forest"),each=100)))
+preds <- predict(fitHxL,newdata=newd,se.fit=TRUE)
+mnlp <- preds$fit        #mean of the linear predictor
+selp <- preds$se.fit     #se of the linear predictor
+cillp <- mnlp - 2 * selp #lower of 95% CI for linear predictor
+ciulp <- mnlp + 2 * selp #upper
+cil <- exp(cillp)        #lower of 95% CI for response scale
+ciu <- exp(ciulp)        #upper
+mu <- exp(mnlp)          #mean of response scale
+preds <- cbind(newd,preds,cil,ciu,mu)
+```
+
+In `ggplot` we can plot this in three layers:
+
+* a ribbon geom (a type of polygon) for intervals, using the `alpha` setting to obtain a nice see-through effect
+* a line geom for estimated means
+* a point geom for the data
+
+We have two dataframes, one with the data and the other with the predictions, so we need to specify the dataframe for each layer. I want to plot the line layer underneath the points layer but then the default label for the y axis is "mu". We need to override that with an explicit y-axis label.
+
+```{r}
+ggplot() +
+    geom_ribbon(data=preds, mapping=aes(x=latitude, ymin=cil, ymax=ciu, fill=habitat), alpha=0.2) +
+    geom_line(data=preds, mapping=aes(x=latitude, y=mu, col=habitat)) +
+    geom_point(data=ant, mapping=aes(x=latitude, y=richness, col=habitat)) +
+    ylab("richness") +
+    theme_bw()
+```
+
+There are two modifications we could make to improve visual perception:
+
+1. colors with semantic meaning (green for forest, orange/brown for bog) that
+are also colorblind friendly
+2. labels added directly to the plot to reduce translational effort (no legend)
+3. set the y axis limits to include zero.
+
+```{r}
+# Bog & Forest colors
+bfc <- c("#d95f02", "#1b9e77")
+
+ggplot() +
+    geom_ribbon(data=preds, mapping=aes(x=latitude, ymin=cil, ymax=ciu, fill=habitat), alpha=0.2) +
+    geom_line(data=preds, mapping=aes(x=latitude, y=mu, col=habitat)) +
+    geom_point(data=ant, mapping=aes(x=latitude, y=richness, col=habitat)) +
+    geom_text(aes(x=42.9, y=3.3, label="Bog"), col=bfc[1]) +
+    geom_text(aes(x=43.85, y=9.5, label="Forest"), col=bfc[2]) +
+    scale_color_manual(values=bfc) +
+    ylab("richness") +
+    ylim(0,18) +
+    theme_bw() +
+    theme(legend.position="none")
+```
