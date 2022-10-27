@@ -143,17 +143,15 @@ ggplot() +
     theme_bw()
 ```
 
-There are two modifications we could make to improve visual perception:
+There are three modifications we could make to improve visual perception:
 
 1. colors with semantic meaning (green for forest, orange/brown for bog) that
 are also colorblind friendly
 2. labels added directly to the plot to reduce translational effort (no legend)
-3. set the y axis limits to include zero.
+3. set the y axis ticks to integer values and to include zero
 
 ```{r}
-# Bog & Forest colors
-bfc <- c("#d95f02", "#1b9e77")
-
+bfc <- c("#d95f02", "#1b9e77") #bog & forest colors
 ggplot() +
     geom_ribbon(data=preds, mapping=aes(x=latitude, ymin=cil, ymax=ciu, fill=habitat), alpha=0.2) +
     geom_line(data=preds, mapping=aes(x=latitude, y=mu, col=habitat)) +
@@ -161,8 +159,9 @@ ggplot() +
     geom_text(aes(x=42.9, y=3.3, label="Bog"), col=bfc[1]) +
     geom_text(aes(x=43.85, y=9.5, label="Forest"), col=bfc[2]) +
     scale_color_manual(values=bfc) +
+    scale_y_continuous(breaks=seq(0, 18, 6), minor_breaks=seq(0, 18, 2),
+                       limits=c(0,18)) +
     ylab("richness") +
-    ylim(0,18) +
     theme_bw() +
     theme(legend.position="none")
 ```
