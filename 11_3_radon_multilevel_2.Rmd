@@ -1,0 +1,289 @@
+---
+title: Multilevel model of radon levels II
+author: Brett Melbourne
+date: 14 Oct 2018 (updated 1 Nov 2022)
+output: github_document
+---
+
+Reading: Chapter 12 of Gelman & Hill
+
+This is part II: variance components model (G&H 12.2). Here we fit a simple variance components model of the average that accounts for grouping structures (in other language, it is purely a random effects model and does not have any fixed effects). In part III we will consider a house-level (G&H 12.3-4) predictor of radon. In part IV, we will consider a county-level predictor.
+
+```{r message=FALSE, warning=FALSE, results=FALSE}
+library(lme4)      #max lik multilevel: lmer(), glmer() etc
+library(arm)       #for se.ranef()
+library(ggplot2)
+library(gridExtra) #arranging multiple plots
+library(dplyr)
+library(rstan)     #for extract()
+library(rstanarm)  #Bayesian multilevel: stan_lmer(), stan_glmer() etc
+options(mc.cores=parallel::detectCores())
+theme_set(theme_bw()) #overrides rstanarm custom theme
+```
+
+Read in data, calculate log radon and convert county to a factor. See `data/radon_MN_about.txt` for data source.
+
+```{r}
+radon_dat <- read.csv("data/radon_MN.csv")
+radon_dat$log_radon <- log(ifelse(radon_dat$radon==0, 0.1, radon_dat$radon))
+radon_dat <- mutate(radon_dat, county=factor(county))
+```
+
+
+### G&H 12.2. Multilevel analysis with no predictors
+
+Our aim here is to look at some models for the mean. We'll look at three models:
+
+1. Complete pooling - the simplest model for the overall mean
+2. No pooling - county means, considering counties as fixed effects
+3. Partial pooling - county means, considering counties as random effects
+
+G&H prefer to not use the terms fixed and random but I use them here because many of you will have learned it this way already. See G&H for more discussion of this. We will broadly follow Gelman & Hill's analysis in Chapter 12 with some elaborations here and there, and we'll use `rstanarm` instead of BUGS.
+
+#### Complete pooling model
+
+In this case, complete pooling is just the overall mean. That is, we omit any data structure or grouping variables.
+
+```{r}
+poolmean <- mean(radon_dat$log_radon)
+poolmean
+cp_pred_df <- data.frame(poolmean) #df for use with ggplot
+```
+
+#### No pooling model
+
+You can think of **no pooling** as separately calculating an estimate of the mean for each county. For example, tabulate the means (and sd and se) for each county:
+
+```{r}
+lnrad_mean_var <- 
+    radon_dat %>%
+    group_by(county) %>%
+    summarize(sample_size=n(), cty_mn=mean(log_radon), cty_sd=sd(log_radon)) %>%
+    mutate(cty_se=cty_sd / sqrt(sample_size)) %>%
+    mutate(sample_size_jit = jitter(sample_size)) #jitter added for plotting
+```
+
+Whenever I do a calculation or summary operation I like to look at the whole result to check that everything makes sense and scan for problems. So I would do this to print every row:
+
+```{r eval=FALSE}
+print(lnrad_mean_var, n=Inf) #n=Inf to print all rows
+```
+
+But here are the first 10 rows
+
+```{r}
+print(lnrad_mean_var, n=10) #n=Inf to print all rows
+```
+
+In printing the whole data frame I saw that there are three counties with only one sample, so we were not able to calculate a standard deviation for those. We could fix this (by estimating from sample size and sd of the other counties) but let's not worry at this stage. Plot what we've got:
+
+```{r}
+lnrad_mean_var %>% 
+    ggplot() +
+    geom_hline(data=cp_pred_df, mapping=aes(yintercept=poolmean), col="blue") +
+    geom_point(mapping=aes(x=sample_size_jit, y=cty_mn)) +
+    geom_linerange(mapping=aes(x=sample_size_jit, 
+                               ymin=cty_mn - cty_se, 
+                               ymax=cty_mn + cty_se)) +
+    scale_x_continuous(trans="log", breaks=c(1,3,10,30,100)) +
+    labs(x="Sample size in county j",
+         y="mean ln(radon) in county j",
+         title="No pooling: separate analyses by county")
+```
+
+This plot is very similar to G&H Fig. 12.1a but not the same. The blue line is the completely pooled estimate (the overall mean). Some of the standard errors are larger than G&H 12.1a because we have calculated them independently for each county. The three points to the left without an interval are the ones we couldn't calculate a standard error for.
+
+Now we'll do as G&H did in Ch 12. This is also a **no pooling** analysis for the county means. This analysis does not pool information about the **means** but it does pool information about the uncertainty (the error of each observation contributes to an estimate of the mean residual error). This is sometimes called the **fixed effects model**, where here `county` is the fixed effect. To fit this model in a frequentist paradigm we can use `lm()`, which is implicitly a GLM with Normal distribution and identity link. We fit `county` as a categorical variable, which gives us estimated means for each county (the maximum likelihood estimates are the means of the within-county samples). We use the means parameterization (i.e without the intercept, thus "-1"):
+
+```{r}
+npfit <- lm( log_radon ~ -1 + county, data=radon_dat )
+```
+
+Check the fitted model (diagnostic plots)
+
+```{r warning=FALSE}
+plot(npfit,1:5,ask=FALSE)
+```
+
+The extended left tail, which has the 0 + 0.1 hack, is evident in the QQ plot but otherwise the diagnostics look good. Let's also look at a residuals histogram compared to the Normal distribution:
+
+```{r}
+r <- residuals(npfit)
+x <- seq(min(r), max(r), length.out=100)
+y <- dnorm(x, mean(r), sd(r))
+res_df <- data.frame(residuals=r)
+norm_df <- data.frame(x=x, y=y)
+rm(r,x,y)
+ggplot() +
+    geom_histogram(data=res_df, mapping=aes(x=residuals, y=stat(density)), bins=60) +
+    geom_line(data=norm_df, mapping=aes(x=x, y=y), col="red")
+```
+
+So, Normal looks like a good approximation for the errors.
+
+Plot the fitted model
+
+```{r}
+np_pred_df <- data.frame(coef(summary(npfit))[,1:2], 
+                         lnrad_mean_var$sample_size_jit)
+names(np_pred_df) <- c("cty_mn","cty_se","sample_size_jit")
+
+gh12.1a <- 
+    np_pred_df %>% 
+    ggplot() +
+    geom_hline(data=cp_pred_df, mapping=aes(yintercept=poolmean), col="blue") +
+    geom_point(mapping=aes(x=sample_size_jit, y=cty_mn)) +
+    geom_linerange(mapping=aes(x=sample_size_jit, 
+                               ymin=cty_mn-cty_se, 
+                               ymax=cty_mn+cty_se)) +
+    scale_x_continuous(trans="log", breaks=c(1,3,10,30,100)) +
+    ylim(-0.1,3.3) +
+    labs(x="Sample size in county j",y="mean ln(radon) in county j",
+         title="No pooling: estimates from linear model fit")
+gh12.1a
+```
+
+Apart from some unimportant details, this is the same as G&H Fig. 12.1a. The blue line is the complete pooling model (i.e. the overall mean).
+
+
+#### Partial pooling & shrinkage in multilevel model
+
+In the **complete pooling** model (i.e. the overall mean) we did not include variation among counties, while in the **no pooling** model, we estimated the county means separately, whether literally by separate analyses or in the fixed effects model. In the **partial pooling** model the estimates for the mean in each county are a balance between the information in a county sample and information from other counties. To achieve this, we formulate a **multilevel model**. In the multilevel model we consider two levels for means: an overall mean and means for counties. Each of the two levels of these means has an associated stochastic process so that there are two **variance components**, a between-county variance associated with the overall mean and a within-county variance associated with the county means. To fit this model in a frequentist paradigm we can use `lmer()` from the package `lme4`. This model is implicitly a generalized linear mixed model (GLMM) with Normal distribution, identity link, and two levels of stochasticity:
+
+```{r}
+ppfit <- lmer( log_radon ~ 1 + (1|county), REML=FALSE, data=radon_dat )
+```
+
+The `1` part of the above model specifies the overall mean (the intercept term) while the `+ (1|county)` part specifies that the intercepts for each county should be random variables (more specifically the deviations, or "random effects", of county means from the overall mean will be modeled as a Normally distributed random variable). `REML=FALSE` says to fit by ordinary maximum likelihood rather than the default residual maximum likelihood.
+
+By default, we get limited diagnostics for `lmer()`. Just residuals vs fitted. The residual plot looks good though. We will later explore some other diagnostic options for multilevel likelihood models.
+
+```{r}
+plot(ppfit)
+```
+
+In the summary we now see estimates for two components (or levels, or strata) of variance, county (among counties) and residual (among houses within counties):
+
+```{r}
+summary(ppfit)
+```
+
+The random effects table shows that the variance at the houses-within county level, the residual variance (0.6), is about 6 times greater than the variance at the between-county level (0.09). In other words, most of the variance in radon is at a small spatial scale, i.e. between houses. Keep in mind that the house-level variance includes radon measurement error in addition to natural variability among houses.
+
+Save a plot of the fitted model
+
+```{r}
+pp_pred_df <- data.frame(coef(ppfit)$county,
+                         se.ranef(ppfit)$county[,1],
+                         lnrad_mean_var$sample_size_jit)
+names(pp_pred_df) <- c("cty_mn","cty_se","sample_size_jit")
+pp_mean_df <- data.frame(ovrl_mn=summary(ppfit)$coefficients[1],
+                         ovrl_se=summary(ppfit)$coefficients[2])
+
+gh12.1b <- 
+    pp_pred_df %>% 
+    ggplot() +
+    geom_hline(data=cp_pred_df, mapping=aes(yintercept=poolmean), col="blue") +
+    geom_hline(data=pp_mean_df, mapping=aes(yintercept=ovrl_mn), 
+               col="blue", lty=2) +
+    geom_point(mapping=aes(x=sample_size_jit, y=cty_mn)) +
+    geom_linerange(mapping=aes(x=sample_size_jit,
+                               ymin=cty_mn-cty_se,
+                               ymax=cty_mn+cty_se)) +
+    scale_x_continuous(trans="log", breaks=c(1,3,10,30,100)) +
+    ylim(-0.1, 3.3) +
+    labs(x="Sample size in county j",y="mean ln(radon) in county j",
+         title="Partial pooling: multilevel model, max likelihood")
+```
+
+Add a reference point to the saved no pooling and partial pooling plots to illustrate shrinkage and plot them side by side:
+
+```{r fig.width=14, fig.height=7}
+gh12.1a_ref <- 
+    gh12.1a + 
+    geom_point(data=np_pred_df[36,],
+               mapping=aes(x=sample_size_jit, y=cty_mn), 
+               pch=1, cex=10, col="red")
+
+gh12.1b_ref <- 
+    gh12.1b + 
+    geom_point(data=pp_pred_df[36,],
+               mapping=aes(x=sample_size_jit, y=cty_mn),
+               pch=1, cex=10, col="red")
+
+grid.arrange(gh12.1a_ref, gh12.1b_ref, nrow = 1)
+```
+ 
+The right panel is the fitted multilevel model compared to our previous fit of the no pooling model in the left panel. In the multilevel model the estimates for the mean in each county are a balance between the sample mean and the overall mean, depending on the within-county sample size. That is, the information in a particular county is pooled with the information from other counties. You can see how this works by comparing the multilevel (partial pooling) model in the right panel to the no pooling model in the left panel. If there are more observations for a given county, there is more information at the county level, so the estimate of the county mean in the multilevel model remains close to the sample mean for the county. If there are fewer observations, information from the other counties will pull an estimate for a particular county toward the overall mean, like county 36, which is circled in red. This is called **shrinkage**. The estimate shrinks toward the overall mean. The other thing to note is the dashed blue line. This is the estimated overall mean from the multilevel model, which is also a balance of the information at different levels. You can see that it is higher than the simpler (but naive) overall mean of the data (solid blue line).
+
+
+#### Partial pooling, Bayesian fit of multilevel model
+
+Figure 12.1b in G&H was actually from a Bayesian version of the multilevel model fitted using BUGS. Compared to the maximum likelihood model we just fitted, this model had flat priors for the three model parameters (overall mean and the two variances). The Bayesian version of this model is accomplished easily with the `stan_lmer()` function of `rstanarm`. We will use the weakly informative priors of `stan_lmer()` by default rather than the flat priors in the BUGS fit of G&H. The difference in analyses is neglible as the data overwhelm the priors in this case.
+
+```{r}
+ppfit_bayes <- stan_lmer(log_radon ~ 1 + (1|county), data=radon_dat)
+print(summary(ppfit_bayes)[,c("mean","sd","n_eff","Rhat")], digits=3)
+```
+
+Diagnostics: We have previously made trace plots and histograms manually from samples. A handy tool is the shiny app included with `rstanarm`. Focus on inspecting convergence in the trace plots and histograms for the posteriors.
+
+```{r eval=FALSE}
+launch_shinystan(ppfit_bayes)
+```
+
+Extract posterior samples
+
+```{r}
+samples <- extract(ppfit_bayes$stanfit)
+names(samples)
+str(samples$alpha) #Samples of overall mean. Matrix: samples by row, 1 col
+str(samples$b) #Samples of county deviations. Matrix: samples by row, 86 cols
+```
+
+I'm not sure what the 86th b parameter is (we could look in the source to figure it out) but the first 85 are the county samples.
+
+Algorithm for posterior samples of the county means. This is an example where we want to get the posterior distribution for a **derived quantity**: the county means. We merely need to add the samples for the overall mean (`alpha`) to the samples for the county deviations (`b`).
+
+```{r}
+countysamples <- samples$b[,1:85] * NA
+for ( i in 1:85 ) {
+    countysamples[,i] <- samples$b[,i] + samples$alpha
+}
+# Now calculate mean and standard deviation of the posterior distributions for
+# the county means.
+countypostmns <- rep(NA, 85)
+countypostses <- rep(NA, 85)
+for ( i in 1:85 ) {
+    countypostmns[i] <- mean(countysamples[,i])
+    countypostses[i] <- sd(countysamples[,i])
+}
+```
+
+Plot of posterior means and standard deviations
+
+```{r fig.width=14, fig.height=7}
+ppbayes_pred_df <- data.frame(countypostmns, countypostses, 
+                              lnrad_mean_var$sample_size_jit)
+names(ppbayes_pred_df) <- c("cty_mn","cty_se","sample_size_jit")
+ppbayes_mean_df <- data.frame(ovrl_mn=mean(samples$alpha),
+                              ovrl_se=sd(samples$alpha))
+gh12.1b_bayes <- 
+    ppbayes_pred_df %>% 
+    ggplot() +
+    geom_hline(data=cp_pred_df, mapping=aes(yintercept=poolmean), col="blue") +
+    geom_hline(data=ppbayes_mean_df, 
+               mapping=aes(yintercept=ovrl_mn), col="blue", lty=2) +
+    geom_point(mapping=aes(x=sample_size_jit, y=cty_mn)) +
+    geom_linerange(mapping=aes(x=sample_size_jit,
+                               ymin=cty_mn-cty_se,
+                               ymax=cty_mn+cty_se)) +
+    scale_x_continuous(trans="log", breaks=c(1,3,10,30,100)) +
+    ylim(-0.1, 3.3) +
+    labs(x="Sample size in county j",y="mean ln(radon) in county j",
+         title="Partial pooling: multilevel model, Bayesian")
+grid.arrange(gh12.1b, gh12.1b_bayes, nrow = 1)
+```
+
+
+The maximum likelihood (left) and Bayesian model (right) estimates are practically identical. This is not surprising, since the priors in the Bayesian model were weak and thus most of the information is in the likelihood.
