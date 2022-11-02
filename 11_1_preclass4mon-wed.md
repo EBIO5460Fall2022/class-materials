@@ -56,12 +56,12 @@ Find it in [Google Drive](https://drive.google.com/drive/folders/1hwgN0sMifgYSMr
 
   
 
-#### 4. Radon multilevel part 1 (basics) - R code
+#### 4. Radon multilevel part 1-2 (basics) - R code
 
-This is the analysis in Gelman & Hill Ch 12. Take a look at the R code `11_3_radon_multilevel` in the class repo:
+This is the analysis in Gelman & Hill Ch 12. Take a look at the R code in the class repo:
 
-* Examples of exploratory data analysis using `dplyr()` and `ggplot()`
-* Multilevel modeling using the frequentist `lmer()` from `lme4` and Bayesian `stan_lmer()` from `rstanarm`
+* [11_2_radon_multilevel_1](11_2_radon_multilevel_1.md) Examples of exploratory data analysis using `dplyr()` and `ggplot()`
+* [11_3_radon_multilevel_2](11_3_radon_multilevel_2.md) Multilevel modeling using the frequentist `lmer()` from `lme4` and Bayesian `stan_lmer()` from `rstanarm`
 
 
 
