@@ -50,17 +50,22 @@ deviation. There is a corresponding `Adjusted prior`, which is the
 equivalent prior on the original scale.
 
 What does a Normal(0,2.5) prior look like? To visualize, we can compute
-it and compare to a “standard Normal”, which is Normal(0,1).
+it:
 
 ``` r
+# Calculate the curve for Normal(0,2.5)
 theta <- seq(-10, 10, 0.1)
-standardN <- dnorm(theta, mean=0, sd=1)
 prior2.5 <- dnorm(theta, mean=0, sd=2.5)
-data.frame(theta, standardN, prior2.5) |> 
+# Outline polygon for 1 sd area under the curve
+auc_1_sd <- c(prior2.5[abs(theta) <= 1], 0, 0)
+theta_uc <- c(theta[abs(theta) <= 1], 1, -1)
+auc_df <- data.frame(theta_uc, auc_1_sd)
+# Plot distribution and 1 sd under curve
+data.frame(theta, prior2.5) |>
     ggplot() +
-    geom_vline(xintercept=c(-1,1), col="gray", lty=2) +
-    geom_line(mapping=aes(x=theta, y=standardN)) +
-    geom_line(mapping=aes(x=theta, y=prior2.5), col="red") +
+    geom_polygon(data=auc_df, 
+                 mapping=aes(x=theta_uc, y=auc_1_sd), fill="grey") +
+    geom_line(mapping=aes(x=theta, y=prior2.5)) +
     ylab("density")
 ```
 
