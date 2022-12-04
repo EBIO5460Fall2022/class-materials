@@ -30,9 +30,9 @@ Deviations
 
 
 #### Submit (at least) the following three components:
-1. `.R` or `.Rmd` (either is equally acceptable; you should use whatever you prefer in your workflow).
+1. `.R` or `.Rmd` document (either is equally acceptable; you should use whatever you prefer in your workflow).
 2. Any files required to run your code (data files etc). I should be able to run your code to reproduce the analysis.
-3. Report in GitHub markdown format (`.md`) that is rendered from your choice of `.R` or `.Rmd` (this report will include an accompanying folder of figures). Check that this `.md` file displays nicely on the GitHub website.
+3. Report(s) in GitHub markdown format (`.md`) that is rendered from your choice of `.R` or `.Rmd` (this report will include an accompanying folder of figures). Check that this `.md` file displays nicely on the GitHub website.
 
 
 
@@ -43,7 +43,7 @@ What should the report include?
 1. Exploratory Data Analysis (EDA)
 2. Sketch/diagram of the data structure
 3. The mathematical model. Should be written in latex and displayed as equations in GitHub markdown. 
-4. Research the default priors for your model in the `rstanarm` documentation. Give the exact parameter values for the priors (e.g. $\sigma$ = 2.5). Justify these choices or any deviations you made from the defaults.
+4. Research the default priors for your model in the `rstanarm` documentation. Give the exact parameter values for the priors (e.g. $\sigma$ = 2.5). **Justify these choices** or any deviations you made from the defaults.
 5. Analysis: see below.
 
 
@@ -53,14 +53,14 @@ What should the report include?
 What should the analysis include?
 
 1. Model fits
-2. Model checks
+2. Model checks (do **and comment on** each of the following)
   * Has the algorithm converged? (e.g. check MCMC chains, R_hat, n_eff)
   * Visualize the model with the data. Does the fitted model represent the data?
   * Conduct posterior predictive checks (Bayesian) or diagnostic checks (Frequentist)
   * Are assumptions met? (e.g. Normality, symmetry, constant variance)
   * Are there any exceptional cases? (e.g. outliers, influence, leverage)
   * Does everything make sense? (e.g. parameter estimates)
-3. Model inferences for parameters or predictions that answer the scientific question, preferably presented graphically. **Depending on the question**, these might include:
+3. Model inferences for parameters or predictions **that answer the scientific question**, preferably presented graphically. Don't just include a bunch of random output. Present the inferences that are relevant to the question. **Depending on the question**, these might include:
   * Posterior distributions
   * Point estimates (points, curves, or surfaces) with uncertainty intervals
   * Hypothesis tests
