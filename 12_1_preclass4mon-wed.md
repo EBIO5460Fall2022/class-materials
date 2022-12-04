@@ -1,4 +1,4 @@
-### Week 11: Preclass preparation for Mon-Wed
+### Week 12: Preclass preparation for Mon-Wed
 
 R markdown,  individual proposals, multilevel models. Aim for (1) plus any catch up reading and code review from last week for Mon, (2)-(3) for Wed.
 

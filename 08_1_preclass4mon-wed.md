@@ -1,4 +1,4 @@
-### Week 7: Preclass preparation for Mon-Wed
+### Week 8: Preclass preparation for Mon-Wed
 
 Bayesian algorithms continued, including MCMC. I'm going to give you all the homework for the week up front and you can work at your own pace. It's mostly Chapter 8 of McElreath, so try to get through about half or more of that by Monday.
 
